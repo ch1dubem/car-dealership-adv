@@ -33,6 +33,7 @@ public class UserInterface {
             System.out.println("8 - Add a vehicle");
             System.out.println("9 - Remove a vehicle");
             System.out.println("10 - Sell/Lease a vehicle");
+            System.out.println("11 - Admin");
             System.out.println("99 - Quit");
             System.out.print("Your choice: ");
 
@@ -54,6 +55,7 @@ public class UserInterface {
                 case 8 -> processAddVehicleRequest();
                 case 9 -> processRemoveVehicleRequest();
                 case 10 -> processSellLeaseRequest();
+                case 11 -> processAdminRequest();
                 case 99 -> System.out.println("Goodbye!");
                 default -> System.out.println("Invalid option.");
             }
@@ -171,6 +173,8 @@ public class UserInterface {
         }
     }
 
+    // ==================== Phase 3: Sell/Lease ====================
+
     private void processSellLeaseRequest() {
         try {
             System.out.print("Enter VIN of vehicle: ");
@@ -202,7 +206,7 @@ public class UserInterface {
 
             System.out.print("Enter customer email: ");
             String email = scanner.nextLine().trim();
-            if (!email.contains("@")) {
+            if (email.isEmpty() || !email.contains("@")) {
                 System.out.println("Please enter a valid email address.");
                 return;
             }
@@ -243,6 +247,10 @@ public class UserInterface {
                 boolean finance = financeInput.equals("yes");
 
                 SalesContract sc = new SalesContract(date, name, email, vehicle, finance);
+
+                // Bonus 2: offer add-ons
+                processAddOns(sc);
+
                 contract = sc;
 
                 System.out.println("\n--- Sale Summary ---");
@@ -250,6 +258,13 @@ public class UserInterface {
                 System.out.printf("Sales Tax (5%%):   $%,.2f%n", sc.getSalesTaxAmount());
                 System.out.printf("Recording Fee:    $%,.2f%n", sc.getRecordingFee());
                 System.out.printf("Processing Fee:   $%,.2f%n", sc.getProcessingFee());
+                if (!sc.getAddOns().isEmpty()) {
+                    System.out.println("Add-Ons:");
+                    for (AddOn a : sc.getAddOns()) {
+                        System.out.printf("  - %s%n", a);
+                    }
+                    System.out.printf("Add-Ons Total:    $%,.2f%n", sc.getAddOnsTotal());
+                }
                 System.out.printf("Total Price:      $%,.2f%n", sc.getTotalPrice());
                 System.out.printf("Finance:          %s%n", finance ? "Yes" : "No");
                 System.out.printf("Monthly Payment:  $%,.2f%n", sc.getMonthlyPayment());
@@ -273,5 +288,45 @@ public class UserInterface {
         } catch (Exception e) {
             System.out.println("An error occurred: " + e.getMessage());
         }
+    }
+
+    // ==================== Bonus 2: Add-Ons ====================
+
+    private void processAddOns(SalesContract sc) {
+        AddOn[] available = AddOn.getAvailableAddOns();
+
+        System.out.println("\n--- Available Add-Ons ---");
+        for (int i = 0; i < available.length; i++) {
+            System.out.printf("  %d - %s%n", (i + 1), available[i]);
+        }
+        System.out.println("  0 - Done selecting");
+
+        while (true) {
+            System.out.print("Select an add-on (0 to finish): ");
+            int pick;
+            try {
+                pick = Integer.parseInt(scanner.nextLine().trim());
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input.");
+                continue;
+            }
+
+            if (pick == 0) break;
+            if (pick < 1 || pick > available.length) {
+                System.out.println("Invalid selection.");
+                continue;
+            }
+
+            AddOn selected = available[pick - 1];
+            sc.addAddOn(selected);
+            System.out.printf("Added: %s%n", selected.getName());
+        }
+    }
+
+    // ==================== Bonus 1: Admin ====================
+
+    private void processAdminRequest() {
+        AdminUserInterface adminUI = new AdminUserInterface(scanner, contractFileManager);
+        adminUI.display();
     }
 }

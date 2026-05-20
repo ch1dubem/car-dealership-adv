@@ -33,6 +33,12 @@ public class ContractFileManager {
                 sb.append(sc.isFinanceOption() ? "YES" : "NO").append("|");
                 sb.append(String.format("%.2f", sc.getMonthlyPayment()));
 
+                // Bonus 2: append add-ons
+                for (AddOn addOn : sc.getAddOns()) {
+                    sb.append("|").append(addOn.getName()).append("|");
+                    sb.append(String.format("%.2f", addOn.getPrice()));
+                }
+
             } else if (contract instanceof LeaseContract) {
                 LeaseContract lc = (LeaseContract) contract;
                 sb.append("LEASE|");
@@ -98,6 +104,16 @@ public class ContractFileManager {
                     if (type.equals("SALE")) {
                         boolean financeOption = parts[16].equalsIgnoreCase("YES");
                         SalesContract sc = new SalesContract(date, customerName, customerEmail, vehicle, financeOption);
+
+                        // Read add-ons if they exist (after index 17)
+                        int i = 18;
+                        while (i + 1 < parts.length) {
+                            String addOnName = parts[i];
+                            double addOnPrice = Double.parseDouble(parts[i + 1]);
+                            sc.addAddOn(new AddOn(addOnName, addOnPrice));
+                            i += 2;
+                        }
+
                         contracts.add(sc);
                     } else if (type.equals("LEASE")) {
                         LeaseContract lc = new LeaseContract(date, customerName, customerEmail, vehicle);
@@ -113,9 +129,9 @@ public class ContractFileManager {
             br.close();
 
         } catch (FileNotFoundException e) {
-            // No contracts file yet, that's okay
+            // No contracts file yet
         } catch (IOException e) {
-            System.out.println("Error reading contracts file: ");
+            System.out.println("Error reading contracts file: " + e.getMessage());
         }
 
         return contracts;
