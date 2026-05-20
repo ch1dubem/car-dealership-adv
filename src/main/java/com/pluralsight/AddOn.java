@@ -1,5 +1,7 @@
 package com.pluralsight;
 
+import java.util.ArrayList;
+
 public class AddOn {
     private String name;
     private double price;
@@ -17,14 +19,14 @@ public class AddOn {
         return String.format("%-25s $%.2f", name, price);
     }
 
-    public static AddOn[] getAvailableAddOns() {
-        return new AddOn[] {
-                new AddOn("Nitrogen Tires", 149.99),
-                new AddOn("Window Tinting", 299.99),
-                new AddOn("All-Season Floor Mats", 89.99),
-                new AddOn("Splash Guards", 124.99),
-                new AddOn("Cargo Tray", 79.99),
-                new AddOn("Wheel Locks", 59.99)
-        };
+    public static ArrayList<AddOn> getAvailableAddOns() {
+        ArrayList<AddOn> addOns = new ArrayList<>();
+        addOns.add(new AddOn("Nitrogen Tires", 149.99));
+        addOns.add(new AddOn("Window Tinting", 299.99));
+        addOns.add(new AddOn("All-Season Floor Mats", 89.99));
+        addOns.add(new AddOn("Splash Guards", 124.99));
+        addOns.add(new AddOn("Cargo Tray", 79.99));
+        addOns.add(new AddOn("Wheel Locks", 59.99));
+        return addOns;
     }
 }

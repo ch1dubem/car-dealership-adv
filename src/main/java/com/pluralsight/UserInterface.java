@@ -62,7 +62,7 @@ public class UserInterface {
         }
     }
 
-    private void displayVehicles(ArrayList<Vehicle> vehicles) {
+    public void displayVehicles(ArrayList<Vehicle> vehicles) {
         if (vehicles == null || vehicles.isEmpty()) {
             System.out.println("No vehicles found.");
             return;
@@ -77,11 +77,11 @@ public class UserInterface {
         }
     }
 
-    private void processGetAllVehiclesRequest() {
+    public void processGetAllVehiclesRequest() {
         displayVehicles(dealership.getAllVehicles());
     }
 
-    private void processGetByPriceRequest() {
+    public void processGetByPriceRequest() {
         System.out.print("Enter minimum price: ");
         double min = Double.parseDouble(scanner.nextLine().trim());
         System.out.print("Enter maximum price: ");
@@ -89,7 +89,7 @@ public class UserInterface {
         displayVehicles(dealership.getVehiclesByPrice(min, max));
     }
 
-    private void processGetByMakeModelRequest() {
+    public void processGetByMakeModelRequest() {
         System.out.println("Enter make: ");
         String make = scanner.nextLine().trim();
         System.out.println("Enter model: ");
@@ -97,7 +97,7 @@ public class UserInterface {
         displayVehicles(dealership.getVehiclesByMakeModel(make, model));
     }
 
-    private void processGetByYearRequest() {
+    public void processGetByYearRequest() {
         System.out.print("Enter minimum year: ");
         int min = Integer.parseInt(scanner.nextLine().trim());
         System.out.print("Enter maximum year: ");
@@ -105,13 +105,13 @@ public class UserInterface {
         displayVehicles(dealership.getVehiclesByYear(min, max));
     }
 
-    private void processGetByColorRequest() {
+    public void processGetByColorRequest() {
         System.out.print("Enter color: ");
         String color = scanner.nextLine().trim();
         displayVehicles(dealership.getVehiclesByColor(color));
     }
 
-    private void processGetByMileageRequest() {
+    public void processGetByMileageRequest() {
         System.out.print("Enter minimum mileage: ");
         double min = Double.parseDouble(scanner.nextLine().trim());
         System.out.print("Enter maximum mileage: ");
@@ -119,13 +119,13 @@ public class UserInterface {
         displayVehicles(dealership.getVehiclesByMileage(min, max));
     }
 
-    private void processGetByVehicleTypeRequest() {
+    public void processGetByVehicleTypeRequest() {
         System.out.print("Enter vehicle type (car, truck, SUV, van): ");
         String type = scanner.nextLine().trim();
         displayVehicles(dealership.getVehiclesByType(type));
     }
 
-    private void processAddVehicleRequest() {
+    public void processAddVehicleRequest() {
         System.out.print("Enter VIN: ");
         int vin = Integer.parseInt(scanner.nextLine().trim());
         System.out.print("Enter year: ");
@@ -151,7 +151,7 @@ public class UserInterface {
         System.out.println("Vehicle added!");
     }
 
-    private void processRemoveVehicleRequest() {
+    public void processRemoveVehicleRequest() {
         System.out.print("Enter VIN of vehicle to remove: ");
         int vin = Integer.parseInt(scanner.nextLine().trim());
 
@@ -175,7 +175,7 @@ public class UserInterface {
 
     // ==================== Phase 3: Sell/Lease ====================
 
-    private void processSellLeaseRequest() {
+    public void processSellLeaseRequest() {
         try {
             System.out.print("Enter VIN of vehicle: ");
             int vin = Integer.parseInt(scanner.nextLine().trim());
@@ -292,12 +292,12 @@ public class UserInterface {
 
     // ==================== Bonus 2: Add-Ons ====================
 
-    private void processAddOns(SalesContract sc) {
-        AddOn[] available = AddOn.getAvailableAddOns();
+    public void processAddOns(SalesContract sc) {
+        ArrayList<AddOn> available = AddOn.getAvailableAddOns();
 
         System.out.println("\n--- Available Add-Ons ---");
-        for (int i = 0; i < available.length; i++) {
-            System.out.printf("  %d - %s%n", (i + 1), available[i]);
+        for (int i = 0; i < available.size(); i++) {
+            System.out.printf("  %d - %s%n", (i + 1), available.get(i));
         }
         System.out.println("  0 - Done selecting");
 
@@ -312,12 +312,12 @@ public class UserInterface {
             }
 
             if (pick == 0) break;
-            if (pick < 1 || pick > available.length) {
+            if (pick < 1 || pick > available.size()) {
                 System.out.println("Invalid selection.");
                 continue;
             }
 
-            AddOn selected = available[pick - 1];
+            AddOn selected = available.get(pick - 1);
             sc.addAddOn(selected);
             System.out.printf("Added: %s%n", selected.getName());
         }
@@ -325,7 +325,7 @@ public class UserInterface {
 
     // ==================== Bonus 1: Admin ====================
 
-    private void processAdminRequest() {
+    public void processAdminRequest() {
         AdminUserInterface adminUI = new AdminUserInterface(scanner, contractFileManager);
         adminUI.display();
     }
